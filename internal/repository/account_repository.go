@@ -18,7 +18,7 @@ func NewAccountRepository(db *sql.DB) *AccountRepository {
 func (r *AccountRepository) Save(account *domain.Account) error {
 	stmt, err := r.db.Prepare(`
 		INSERT INTO accounts (id, name, email, api_key, balance, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
 	`)
 
 	if err != nil {
@@ -51,7 +51,7 @@ func (r *AccountRepository) FindByAPIKey(apiKey string) (*domain.Account, error)
 	err := r.db.QueryRow(`
 		SELECT id, name, email, api_key, balance, created_at, updated_at
 		FROM accounts
-		WHERE api_key = $1
+		WHERE api_key = ?
 	`, apiKey).Scan(
 		&account.ID,
 		&account.Name,
@@ -83,7 +83,7 @@ func (r *AccountRepository) FindByID(id string) (*domain.Account, error) {
 	err := r.db.QueryRow(`
 		SELECT id, name, email, api_key, balance, created_at, updated_at
 		FROM accounts
-		WHERE api_key = $1
+		WHERE api_key = ?
 	`, id).Scan(
 		&account.ID,
 		&account.Name,
@@ -118,7 +118,7 @@ func (r *AccountRepository) UpdateBalance(account *domain.Account) error {
 	defer tx.Rollback()
 
 	var currentBalance float64
-	err = tx.QueryRow(`SELECT balance FROM accounts WHERE id = $1 FOR UPDATE`, account.ID).Scan(&currentBalance)
+	err = tx.QueryRow(`SELECT balance FROM accounts WHERE id = ? FOR UPDATE`, account.ID).Scan(&currentBalance)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return domain.ErrAccountNotFound
@@ -130,8 +130,8 @@ func (r *AccountRepository) UpdateBalance(account *domain.Account) error {
 
 	_, err = tx.Exec(`
 		UPDATE accounts
-		SET balance = $1, updated_at = $2
-		WHERE id = $3
+		SET balance = ?, updated_at = ?
+		WHERE id = ?
 	`, account.Balance, time.Now(), account.ID)
 
 	if err != nil {
