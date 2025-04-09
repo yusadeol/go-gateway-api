@@ -42,8 +42,14 @@ func main() {
 	}
 	defer db.Close()
 
-	accountService := service.NewAccountService(repository.NewAccountRepository(db))
+	accountRepository := repository.NewAccountRepository(db)
+	accountService := service.NewAccountService(accountRepository)
+	srv := server.NewServer(accountService, getEnv("HTTP_PORT", "8000"))
 
-	server := server.NewServer(accountService, getEnv("HTTP_PORT", "8000"))
-	server.Start()
+	srv.ConfigureRoutes()
+
+	err = srv.Start()
+	if err != nil {
+		log.Fatal("Error starting server: ", err)
+	}
 }
