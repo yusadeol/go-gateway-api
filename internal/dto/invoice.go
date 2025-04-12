@@ -14,7 +14,7 @@ const (
 )
 
 type CreateInvoiceInput struct {
-	Account     AccountInput
+	Account     *AccountInput
 	Description string           `json:"description"`
 	PaymentType string           `json:"payment_type"`
 	Amount      float64          `json:"amount"`
