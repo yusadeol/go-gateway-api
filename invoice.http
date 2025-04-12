@@ -1,0 +1,28 @@
+### Create a new invoice
+POST http://localhost:8000/invoices
+Content-Type: application/json
+Accept: application/json
+X-API-KEY: 7fab1905dd99204a9740f08cd7fd0ead
+
+{
+    "description": "Compra de café gurmet",
+    "payment_type":  "Credit card",
+    "amount": 100.00,
+    "card":  {
+        "number": "4032037413554813",
+        "cvv": "294",
+        "expiry_month":  3,
+        "expiry_year": 2027,
+        "holder_name":  "Generic Firstname With Lastname"
+    }
+}
+
+### Get an existing invoice by id
+GET http://localhost:8000/invoices/9b282848-5689-4467-bdaa-e7c70843e726
+Accept: application/json
+X-API-KEY: 7fab1905dd99204a9740f08cd7fd0ead
+
+### Get all existing invoices from account
+GET http://localhost:8000/accounts/invoices
+Accept: application/json
+X-API-KEY: 7fab1905dd99204a9740f08cd7fd0ead
