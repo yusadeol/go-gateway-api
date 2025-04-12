@@ -14,11 +14,15 @@ const (
 )
 
 type CreateInvoiceInput struct {
-	APIKey      string
+	Account     AccountInput
 	Description string           `json:"description"`
 	PaymentType string           `json:"payment_type"`
 	Amount      float64          `json:"amount"`
 	Card        *CreditCardInput `json:"card"`
+}
+
+type AccountInput struct {
+	APIKey string `json:"api_key"`
 }
 
 type CreditCardInput struct {
@@ -41,18 +45,18 @@ type InvoiceOutput struct {
 	UpdatedAt      time.Time `json:"updated_at"`
 }
 
-func ToInvoice(createInvoiceInput *CreateInvoiceInput, accountID string) (*domain.Invoice, error) {
+func ToInvoice(input *CreateInvoiceInput, accountID string) (*domain.Invoice, error) {
 	return domain.NewInvoice(
 		accountID,
-		createInvoiceInput.Amount,
-		createInvoiceInput.Description,
-		createInvoiceInput.PaymentType,
+		input.Amount,
+		input.Description,
+		input.PaymentType,
 		&domain.CreditCard{
-			Number:      createInvoiceInput.Card.Number,
-			CVV:         createInvoiceInput.Card.CVV,
-			ExpiryMonth: createInvoiceInput.Card.ExpiryMonth,
-			ExpiryYear:  createInvoiceInput.Card.ExpiryYear,
-			HolderName:  createInvoiceInput.Card.HolderName,
+			Number:      input.Card.Number,
+			CVV:         input.Card.CVV,
+			ExpiryMonth: input.Card.ExpiryMonth,
+			ExpiryYear:  input.Card.ExpiryYear,
+			HolderName:  input.Card.HolderName,
 		},
 	)
 }
