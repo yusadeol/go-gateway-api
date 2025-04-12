@@ -49,10 +49,8 @@ func (i *InvoiceRepository) FindByID(id string) (*domain.Invoice, error) {
 	var invoice domain.Invoice
 
 	err := i.db.QueryRow(
-		`
-			SELECT id, account_id, status, description, payment_type, amount, card_last_digits, created_at, updated_at
-			FROM invoices WHERE id = ?
-		`,
+		`SELECT id, account_id, status, description, payment_type, amount, card_last_digits, created_at, updated_at
+		FROM invoices WHERE id = ?`,
 		id,
 	).Scan(
 		&invoice.ID,
@@ -79,10 +77,8 @@ func (i *InvoiceRepository) FindByID(id string) (*domain.Invoice, error) {
 
 func (i *InvoiceRepository) FindByAccountID(accountID string) ([]*domain.Invoice, error) {
 	rows, err := i.db.Query(
-		`
-			SELECT id, account_id, status, description, payment_type, amount, card_last_digits, created_at, updated_at
-			FROM invoices WHERE account_id = ?
-		`,
+		`SELECT id, account_id, status, description, payment_type, amount, card_last_digits, created_at, updated_at
+		FROM invoices WHERE account_id = ?`,
 		accountID,
 	)
 
