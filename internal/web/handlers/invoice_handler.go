@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/go-chi/chi/v5"
+	"github.com/yusadeol/go-gateway-api/internal/domain"
 	"github.com/yusadeol/go-gateway-api/internal/dto"
 	"github.com/yusadeol/go-gateway-api/internal/service"
 	"net/http"
@@ -24,7 +26,9 @@ func (h *InvoiceHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	input.Account.APIKey = r.Header.Get("X-API-Key")
+	input.Account = &dto.AccountInput{
+		APIKey: r.Header.Get("X-API-Key"),
+	}
 
 	var output *dto.InvoiceOutput
 	output, err = h.invoiceService.CreateInvoice(&input)
@@ -50,7 +54,13 @@ func (h *InvoiceHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 
 	output, err := h.invoiceService.GetByID(id, r.Header.Get("X-API-Key"))
 	if err != nil {
+		if errors.Is(err, domain.ErrUnauthorizedAccess) {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
+
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
