@@ -22,7 +22,7 @@ type CreateInvoiceInput struct {
 }
 
 type AccountInput struct {
-	APIKey string `json:"api_key"`
+	APIKey string
 }
 
 type CreditCardInput struct {
